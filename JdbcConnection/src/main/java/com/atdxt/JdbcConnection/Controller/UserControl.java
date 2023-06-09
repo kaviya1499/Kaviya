@@ -6,12 +6,9 @@ import java.util.List;
 import com.atdxt.JdbcConnection.Model.User;
 import com.atdxt.JdbcConnection.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -19,17 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserControl {
 
     @Autowired
-    public UserService dao;
+    public UserService userService;
 
-    @RequestMapping("")
-    public List<User> customerInformation() {
-        List<User> Users = dao.isData();
-        return Users;
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers(){
+        List<User> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody User user) {
-        dao.insertUser(user);
-        return ResponseEntity.ok("User created successfully");
+    public ResponseEntity<User> createUser(@RequestBody User user){
+        User savedUser = userService.createUser(user);
+        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 }
