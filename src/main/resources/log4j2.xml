@@ -8,15 +8,7 @@
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${LOG_PATTERN}" />
         </Console>
-      <!--  <RollingFile name="appLog"
-                     fileName="${LOG_PATH}/application.log"
-                     filePattern="${LOG_PATH}/application-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="${LOG_PATTERN}" />
-            <Policies>
-                <SizeBasedTriggeringPolicy size="19500KB" />
-            </Policies>
-            <DefaultRolloverStrategy max="1" />
-        </RollingFile>-->
+      
 
         <RollingFile
                 name="appLog"

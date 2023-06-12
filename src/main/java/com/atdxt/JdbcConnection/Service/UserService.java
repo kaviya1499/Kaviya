@@ -21,31 +21,6 @@ public interface UserService {
 
     User createUser(User user);
 
-   // @Autowired
-   // private JdbcTemplate jdbcTemplate;
 
-   // private static final String SQL = "select * from jdbc";
-   // private static final String INSERT_SQL = "INSERT INTO jdbc (name, age, address) VALUES (?, ?, ?)";
-
- /*   public List<User> isData() {
-
-        List<User> customers = new ArrayList<User>();
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(SQL);
-
-        for (Map<String, Object> row : rows)
-        {
-            User student = new User();
-            student.setName((String)row.get("Name"));
-            student.setAge((String)row.get("Age"));
-            student.setAddress((String)row.get("Address"));
-
-            customers.add(student);
-        }
-
-        return customers;
-    }
-    public void insertUser(User user) {
-        jdbcTemplate.update(INSERT_SQL, user.getName(), user.getAge(), user.getAddress());
-    }*/
 
 }
