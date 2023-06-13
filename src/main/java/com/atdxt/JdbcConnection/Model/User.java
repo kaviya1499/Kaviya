@@ -1,13 +1,22 @@
 package com.atdxt.JdbcConnection.Model;
 
+import jakarta.persistence.*;
 
+
+import javax.lang.model.element.Name;
+
+@Entity
+@Table(name="users")
 public class User {
 
-
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
+    @Column(name = "Name")
     private String Name;
+    @Column(name="Age")
     private String Age;
+    @Column(name = "Address")
     private String Address;
 
     public User() {

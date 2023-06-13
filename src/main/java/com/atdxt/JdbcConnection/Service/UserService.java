@@ -14,34 +14,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 
 
-@Repository
-public class UserService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+public interface UserService {
 
-    private static final String SQL = "select * from jdbc";
-    private static final String INSERT_SQL = "INSERT INTO jdbc (name, age, address) VALUES (?, ?, ?)";
+    List <User> getAllUsers();
 
-    public List<User> isData() {
+    User createUser(User user);
 
-        List<User> customers = new ArrayList<User>();
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(SQL);
 
-        for (Map<String, Object> row : rows)
-        {
-            User student = new User();
-            student.setName((String)row.get("name"));
-            student.setAge((String)row.get("age"));
-            student.setAddress((String)row.get("address"));
-
-            customers.add(student);
-        }
-
-        return customers;
-    }
-    public void insertUser(User user) {
-        jdbcTemplate.update(INSERT_SQL, user.getName(), user.getAge(), user.getAddress());
-    }
 
 }
