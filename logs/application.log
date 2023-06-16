@@ -1,3 +1,0 @@
-2023-06-12 17:19:39 INFO  Closing JPA EntityManagerFactory for persistence unit 'default'
-2023-06-12 17:19:39 INFO  HikariPool-1 - Shutdown initiated...
-2023-06-12 17:19:39 INFO  HikariPool-1 - Shutdown completed.
