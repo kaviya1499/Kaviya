@@ -21,7 +21,7 @@
             <Policies>
                 <CronTriggeringPolicy schedule="0 * * * * ?" />
             </Policies>
-            <DefaultRolloverStrategy max="1" />
+            <DefaultRolloverStrategy max="5" />
         </RollingFile>
 
 

@@ -2,6 +2,8 @@ package com.atdxt.ControllerService;
 
 import com.atdxt.Entity.UserEntity;
 import com.atdxt.MainService.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +22,8 @@ import java.util.List;
 @RequestMapping("/getinfo")
 public class UserControl {
 
+    public static final Logger logging= LoggerFactory.getLogger(UserControl.class);
+
     @Autowired
     private UserService userService;
 
@@ -32,17 +36,28 @@ public class UserControl {
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getAllUsers(){
-        List<UserEntity> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-
+        try {
+            logging.debug("Debug messages.......... ");
+            List<UserEntity> users = userService.getAllUsers();
+            logging.info("Fetched Users {}",users.size());
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }catch (Exception e) {
+            logging.error("Error occurred while fetching users: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user){
-
-        UserEntity savedUser = userService.createUser(user);
+        try {
+            UserEntity savedUser = userService.createUser(user);
+            logging.info("Users Inserted Successfully......");
             return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
 
+        }catch (Exception e) {
+            logging.error("Error occurred while Inserting : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         }
 
 
