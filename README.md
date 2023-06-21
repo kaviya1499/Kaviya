@@ -80,6 +80,11 @@ To Get Response in Terminal
        To Get: curl http://localhost:8080/getinfo
        To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://localhost:8080/getinfo
 
+### The application is hosted on an EC2 instance running on Amazon Web Services (AWS).
+The application is accessible via the URL provided below:
+
+    http://ec2-13-48-203-246.eu-north-1.compute.amazonaws.com:8080/getinfo
+
 # Usage
 Once the application is deployed, you can interact with it using HTTP requests.
 1. Create: POST /entity - Create a new entity by sending a JSON payload with the required data.
