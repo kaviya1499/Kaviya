@@ -79,11 +79,43 @@ To Get Response in Terminal
  
        To Get: curl http://localhost:8080/getinfo
        To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://localhost:8080/getinfo
+       EG : curl -X POST -H "Content-Type: Application/json" -d '{"address":"america","age":"22","name":"kavi"}' http://localhost:8080/getinfo
 
-### The application is hosted on an EC2 instance running on Amazon Web Services (AWS).
-The application is accessible via the URL provided below:
+ **Command Line to access EC2 instance:**
 
-    http://ec2-13-48-203-246.eu-north-1.compute.amazonaws.com:8080/getinfo
+    ssh -i springapp.pem ubuntu@ec2-13-48-248-212.eu-north-1.compute.amazonaws.com
+    
+
+## This Application has hosted on Amazon Web Services (AWS)
+###  EC2 instance and Relational Database Service(RDS)
+
+To view the data available in EC2 & RDS, accessible via the URL provided below:
+
+    http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+
+Use Terminal or Api testing tool like postman:
+
+    To Get: curl http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+    To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+    EG: curl -X POST -H "Content-Type: Application/json" -d '{"address": "london","age": "22","name":"kaviya"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+  
+# credentials
+* **Ec2 Instance name:** springapp
+* **Public IPv4 DNS:** ec2-13-48-248-212.eu-north-1.compute.amazonaws.com
+* **Public IPv4 address:** 13.48.248.212
+* **Port:** 8080
+* **password:** Kaviya@99
+
+
+* **RDS Instance name:** springapp
+* **RDS Database name:** springapp
+* **User Name:** kaviya
+* **Password:** Kaviya99
+* **End point:** springapp.cyi0cfbhrwqo.eu-north-1.rds.amazonaws.com
+* **port:** 3306
+
+
+
 
 # Usage
 Once the application is deployed, you can interact with it using HTTP requests.
