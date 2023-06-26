@@ -12,8 +12,22 @@
 
         <RollingFile
                 name="appLog"
-                fileName="/var/log/jpaandhibernate/application.log"
-                filePattern="/var/log/jpaandhibernate/application.%d{dd-MMM-HH-mm}.log"
+                fileName="/var/log/jpaandhibernate/info_logs/application.log"
+                filePattern="/var/log/jpaandhibernate/info_logs/application.%d{dd-MMM-HH-mm}.log"
+                ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <CronTriggeringPolicy schedule="0 * * * * ?" />
+            </Policies>
+            <DefaultRolloverStrategy max="5" />
+        </RollingFile>
+
+        <RollingFile
+                name="errorLog"
+                fileName="/var/log/jpaandhibernate/error_logs/errors.log"
+                filePattern="/var/log/jpaandhibernate/error_logs/errors.%d{dd-MMM-HH-mm}.log"
                 ignoreExceptions="false">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
@@ -26,15 +40,33 @@
 
 
     </Appenders>
-    <Loggers>
-        <Logger name="com.atdxt.JdbcConnection.Controller" additivity="false">
-            <AppenderRef ref="appLog" />
+   <!-- <Loggers>
+
+        <Root level="info">
+            <AppenderRef ref="errorLog" />
+        </Root>
+
+        <Logger name="com.atdxt.JdbcConnection.Controller" level="info">
+
             <AppenderRef ref="Console" />
+            <AppenderRef ref="appLog" />
         </Logger>
+
+    </Loggers>-->
+
+    <Loggers>
         <Root level="info">
             <AppenderRef ref="Console" />
             <AppenderRef ref="appLog" />
-
         </Root>
+
+        <Logger name="com.atdxt.JdbcConnection.Controller" level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="appLog" />
+        </Logger>
+
+        <Logger name="com.atdxt.JdbcConnection.Controller" level="error">
+            <AppenderRef ref="errorLog" />
+        </Logger>
     </Loggers>
 </Configuration>

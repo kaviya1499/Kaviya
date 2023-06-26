@@ -40,6 +40,8 @@ public class UserControl {
     public ResponseEntity<List<UserEntity>> getAllUsers(){
         try {
             logging.debug("Debug messages.......... ");
+           int res =10/0;
+
             List<UserEntity> users = userService.getAllUsers();
             logging.info("Fetched Users {}",users.size());
             return new ResponseEntity<>(users, HttpStatus.OK);
@@ -64,15 +66,26 @@ public class UserControl {
 
         @GetMapping("{id}")
         public ResponseEntity<UserEntity> getUserById(@PathVariable("id") Integer userId){
-        UserEntity userEntity = userService.getUserById(userId);
-        return new ResponseEntity<>(userEntity, HttpStatus.OK);
+        try {
+            UserEntity userEntity = userService.getUserById(userId);
+            logging.info("User Fetched Successfully......");
+            return new ResponseEntity<>(userEntity, HttpStatus.OK);
+        }catch (Exception e){
+            logging.error("Error occurred while Fetching data : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         }
 
         @PutMapping("{id}")
         public ResponseEntity<UserEntity> UpdateUser(@PathVariable("id") Integer userId, @RequestBody UserEntity userEntity){
-        userEntity.setId(userId);
-        UserEntity updateuser = userService.updateUser(userEntity);
-        return new ResponseEntity<>(updateuser, HttpStatus.OK);
+        try {
+            userEntity.setId(userId);
+            UserEntity updateuser = userService.updateUser(userEntity);
+            return new ResponseEntity<>(updateuser, HttpStatus.OK);
+        }catch (Exception e){
+            logging.error("Error occurred while Updating the data into table : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
 
 
         }
