@@ -2,7 +2,17 @@ package com.atdxt.Entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name= "users")
 public class UserEntity {
@@ -16,7 +26,26 @@ public class UserEntity {
     @Column(name = "Address")
     private String Address;
 
-    public UserEntity() {
+
+    @Column(name = "createdon")
+    private LocalDateTime createdon;
+
+    @Column(name = "modified")
+    private LocalDateTime modified;
+
+
+    @PrePersist
+    protected void onCreate() {
+        createdon = LocalDateTime.now();
+        modified = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modified = LocalDateTime.now();
+    }
+
+   /* public UserEntity() {
     }
 
     public UserEntity(String name, String age, String address) {
@@ -56,5 +85,5 @@ public class UserEntity {
 
     public void setAddress(String address) {
         Address = address;
-    }
+    }*/
 }

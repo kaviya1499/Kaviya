@@ -2,6 +2,7 @@ package com.atdxt.ControllerService;
 
 import com.atdxt.Entity.UserEntity;
 import com.atdxt.MainService.UserService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.List;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/getinfo")
 public class UserControl {
 
@@ -29,9 +31,9 @@ public class UserControl {
 
 
 
-   public UserControl(UserService userservice) {
+  /* public UserControl(UserService userservice) {
        this.userService = userservice;
-   }
+   }*/
 
 
     @GetMapping
@@ -58,6 +60,21 @@ public class UserControl {
             logging.error("Error occurred while Inserting : {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        }
+
+        @GetMapping("{id}")
+        public ResponseEntity<UserEntity> getUserById(@PathVariable("id") Integer userId){
+        UserEntity userEntity = userService.getUserById(userId);
+        return new ResponseEntity<>(userEntity, HttpStatus.OK);
+        }
+
+        @PutMapping("{id}")
+        public ResponseEntity<UserEntity> UpdateUser(@PathVariable("id") Integer userId, @RequestBody UserEntity userEntity){
+        userEntity.setId(userId);
+        UserEntity updateuser = userService.updateUser(userEntity);
+        return new ResponseEntity<>(updateuser, HttpStatus.OK);
+
+
         }
 
 

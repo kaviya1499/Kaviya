@@ -11,5 +11,9 @@ public interface UserService {
 
     UserEntity createUser(UserEntity user);
 
+    UserEntity getUserById(Integer userId);
+
+    UserEntity updateUser(UserEntity userEntity);
+
 
 }
