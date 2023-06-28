@@ -1,12 +1,19 @@
 package com.atdxt.MainService;
 
+import com.atdxt.Entity.Details_Entity;
+import com.atdxt.Entity.UserRequest;
 import com.atdxt.MainService.UserService;
 import com.atdxt.Entity.UserEntity;
+import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,10 +21,13 @@ import java.util.Optional;
 
 @Component
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private DetailsRepository detailsRepository;
 
     /*public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -28,28 +38,55 @@ public class UserServiceImpl implements UserService{
         return userRepository.findAll();
     }
 
-    @Override
+   /* @Override
     public UserEntity createUser(UserEntity user) {
         return userRepository.save(user);
+    }*/
+
+    public UserEntity createUser(@RequestBody UserRequest userreq) {
+        Details_Entity det = new Details_Entity();
+        det.setEmail(userreq.getEmail());
+        det.setDesignation(userreq.getDesignation());
+        det = detailsRepository.save(det);
+
+        UserEntity userEntity = new UserEntity(userreq);
+        userEntity.setDetailsEntity(det);
+        return userRepository.save(userEntity);
+
     }
 
+
     @Override
-    public UserEntity getUserById(Integer userId){
+    public UserEntity getUserById(Integer userId) {
         Optional<UserEntity> getuser = userRepository.findById(userId);
         return getuser.get();
     }
 
     @Override
-    public  UserEntity updateUser(UserEntity userEntity){
-       UserEntity user = userRepository.findById(userEntity.getId()).get();
-        user.setAddress(userEntity.getAddress());
-        user.setAge(userEntity.getAge());
-        user.setName(userEntity.getName());
+    public UserEntity updateUser(Integer userId, @RequestBody UserRequest userreq) {
+        //UserEntity user = userRepository.findById(userEntity.getId()).get();
+        Optional<UserEntity> optionalUser = userRepository.findById(userId);
 
+        if (optionalUser.isPresent()) {
+            UserEntity user = optionalUser.get();
+            Details_Entity details = user.getDetailsEntity();
+            if (details == null) {
+                details = new Details_Entity();
+                user.setDetailsEntity(details);
+            }
 
-        UserEntity UpdateUser = userRepository.save(user);
-        return UpdateUser;
+            details.setEmail(userreq.getEmail());
+            details.setDesignation(userreq.getDesignation());
+            details = detailsRepository.save(details);
+
+            user.setName(userreq.getName());
+            user.setAge(userreq.getAge());
+            user.setAddress(userreq.getAddress());
+
+            return userRepository.save(user);
+        }
+
+        return null;
 
     }
-
 }

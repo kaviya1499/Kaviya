@@ -19,10 +19,10 @@
 -- Table structure for table `jdbc`
 --
 
-DROP TABLE IF EXISTS `jdbc`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `jdbc` (
+CREATE TABLE IF NOT EXISTS `jdbc` (
   `stu_Id` int NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) DEFAULT NULL,
   `Age` varchar(255) DEFAULT NULL,
@@ -35,14 +35,18 @@ CREATE TABLE `jdbc` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `address` varchar(255) DEFAULT NULL,
   `age` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
+
+
+
+
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -61,5 +65,6 @@ CREATE TABLE `users` (
 
 
 ALTER TABLE `users`
-ADD `createdon` DATETIME DEFAULT CURRENT_TIMESTAMP,
+ADD `createdon` DATETIME DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `users`
 ADD `modified` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;

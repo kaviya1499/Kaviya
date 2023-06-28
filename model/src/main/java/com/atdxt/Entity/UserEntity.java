@@ -1,18 +1,16 @@
 package com.atdxt.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @Entity
 @Table(name= "users")
 public class UserEntity {
@@ -28,11 +26,55 @@ public class UserEntity {
 
 
     @Column(name = "createdon")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Kolkata")
     private LocalDateTime createdon;
 
     @Column(name = "modified")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Kolkata")
     private LocalDateTime modified;
 
+
+    @JoinColumn(name = "detid")
+    @OneToOne
+    private Details_Entity detailsEntity;
+
+
+
+    public String getFormattedDateTime(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = currentDateTime.format(formatter);
+
+        createdon = LocalDateTime.parse(formattedDateTime, formatter);
+        modified = LocalDateTime.parse(formattedDateTime, formatter);
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        modified = LocalDateTime.now();
+    }
+
+    public UserEntity() {
+    }
+
+    public UserEntity(UserRequest req) {
+        this.Name = req.getName();
+        this.Age = req.getAge();
+        this.Address = req.getAddress();
+    }
+
+
+
+
+
+
+   /*
 
     @PrePersist
     protected void onCreate() {
@@ -45,7 +87,12 @@ public class UserEntity {
         modified = LocalDateTime.now();
     }
 
-   /* public UserEntity() {
+
+
+
+
+
+   public UserEntity() {
     }
 
     public UserEntity(String name, String age, String address) {
