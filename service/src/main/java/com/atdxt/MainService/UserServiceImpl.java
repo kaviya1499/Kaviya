@@ -1,22 +1,18 @@
 package com.atdxt.MainService;
 
-import com.atdxt.Entity.Details_Entity;
-import com.atdxt.Entity.UserRequest;
-import com.atdxt.MainService.UserService;
-import com.atdxt.Entity.UserEntity;
+import com.atdxt.Entity.*;
+import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -29,12 +25,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private DetailsRepository detailsRepository;
 
+    @Autowired
+    private AuthRepository authRepository;
+
     /*public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }*/
 
     @Override
     public List<UserEntity> getAllUsers() {
+
         return userRepository.findAll();
     }
 
@@ -89,4 +89,43 @@ public class UserServiceImpl implements UserService {
         return null;
 
     }
+
+    @Override
+    public Auth_Entity CreateAuth(@RequestBody Auth_Entity authEntity){
+        Auth_Entity auth_entity = new Auth_Entity();
+        auth_entity.setUsername(authEntity.getUsername());
+        String password = authEntity.getPassword();
+        String passwordEncode= Base64.getEncoder().encodeToString(password.getBytes());
+        auth_entity.setPassword(passwordEncode);
+        return authRepository.save(auth_entity);
+
+    }
+
+    @Override
+    public List<AuthDecode> getAllAuth() {
+        List<Auth_Entity> authEntities = authRepository.findAll();
+        List<AuthDecode> authDtos = decodePasswords(authEntities);
+        return authDtos;
+    }
+
+
+    private List<AuthDecode> decodePasswords(List<Auth_Entity> authEntities) {
+        return authEntities.stream()
+                .map(authEntity -> new AuthDecode(authEntity.getUsername(), decodeBase64(authEntity.getPassword())))
+                .collect(Collectors.toList());
+    }
+
+    private String decodeBase64(String encodedValue) {
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedValue);
+        return new String(decodedBytes);
+    }
+
+
+
+
+
+
+
+
+
 }

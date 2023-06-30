@@ -1,3 +1,5 @@
-com/atdxt/Entity/UserEntity.class
+com/atdxt/Entity/Auth_Entity.class
 com/atdxt/Entity/UserRequest.class
+com/atdxt/Entity/UserEntity.class
+com/atdxt/Entity/AuthDecode.class
 com/atdxt/Entity/Details_Entity.class

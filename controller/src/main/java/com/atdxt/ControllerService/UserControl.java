@@ -1,9 +1,8 @@
 package com.atdxt.ControllerService;
 
-import com.atdxt.Entity.UserEntity;
-import com.atdxt.Entity.Details_Entity;
-import com.atdxt.Entity.UserRequest;
+import com.atdxt.Entity.*;
 import com.atdxt.MainService.UserService;
+import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -97,6 +99,35 @@ public class UserControl {
 
     }
 
+
+
+
+    @PostMapping("/auth")
+    public ResponseEntity<Auth_Entity> AuthCreate(@RequestBody Auth_Entity authEntity){
+        try {
+            Auth_Entity savedUser = userService.CreateAuth(authEntity);
+            logging.info("Username and Password Inserted Successfully");
+            return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+        }catch (Exception e){
+            logging.error("Error occured while Inserting username and password : {}",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @GetMapping("/getauth")
+    public ResponseEntity<List<AuthDecode>> getAllAuth(){
+        try {
+
+
+            List<AuthDecode> users = userService.getAllAuth();
+            logging.info("Fetched Usernames and passwords {}",users.size());
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }catch (Exception e) {
+            logging.error("Error occurred while fetching users: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 
 
