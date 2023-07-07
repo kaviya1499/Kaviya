@@ -5,7 +5,10 @@ import com.atdxt.MainService.UserService;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +17,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -57,7 +65,14 @@ public class UserControl {
     }
 
     @PostMapping
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserRequest userreq){
+    public ResponseEntity<Object> createUser( @RequestBody UserRequest userreq){
+        if (!EmailValidator.isValid(userreq.getEmail())) {
+            return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() + " ' Invalid email address provided.");
+        }
+        if (!EmailValidator.isUnique(userreq.getEmail())) {
+            return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() +" ' Email Already Exists(Duplicate entry)");
+        }
+
         try {
             UserEntity savedUser = userService.createUser(userreq);
             logging.info("Users Inserted Successfully......");
@@ -65,9 +80,14 @@ public class UserControl {
 
         }catch (Exception e) {
             logging.error("Error occurred while Inserting : {}", e.getMessage());
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
+
 
     @GetMapping("{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable("id") Integer userId){
@@ -130,3 +150,26 @@ public class UserControl {
     }
 
 }
+
+
+class EmailValidator {
+    private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    private static final Set<String> UNIQUE_EMAILS = new HashSet<>();
+
+    public static boolean isValid(String email) {
+        return EMAIL_REGEX_PATTERN.matcher(email).matches();
+    }
+
+    public static boolean isUnique(String email) {
+        if (UNIQUE_EMAILS.contains(email)) {
+            return true; // Email is not unique
+        } else {
+            UNIQUE_EMAILS.add(email);
+            return false; // Email is unique
+        }
+    }
+}
+
+
+
+

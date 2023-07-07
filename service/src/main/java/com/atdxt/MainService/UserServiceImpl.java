@@ -4,14 +4,17 @@ import com.atdxt.Entity.*;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -33,20 +36,30 @@ public class UserServiceImpl implements UserService {
     }*/
 
     @Override
-    public List<UserEntity> getAllUsers() {
+       public List<UserEntity> getAllUsers() {
 
         return userRepository.findAll();
+
+
     }
+
+
+
+
+
+
 
    /* @Override
     public UserEntity createUser(UserEntity user) {
         return userRepository.save(user);
     }*/
 
-    public UserEntity createUser(@RequestBody UserRequest userreq) {
+    public UserEntity createUser(@Valid @RequestBody UserRequest userreq) {
         Details_Entity det = new Details_Entity();
         det.setEmail(userreq.getEmail());
         det.setDesignation(userreq.getDesignation());
+        det.setState(userreq.getState());
+        det.setCountry(userreq.getCountry());
         det = detailsRepository.save(det);
 
         UserEntity userEntity = new UserEntity(userreq);
@@ -77,6 +90,8 @@ public class UserServiceImpl implements UserService {
 
             details.setEmail(userreq.getEmail());
             details.setDesignation(userreq.getDesignation());
+            details.setState(userreq.getState());
+            details.setCountry(userreq.getCountry());
             details = detailsRepository.save(details);
 
             user.setName(userreq.getName());
@@ -89,6 +104,9 @@ public class UserServiceImpl implements UserService {
         return null;
 
     }
+
+
+
 
     @Override
     public Auth_Entity CreateAuth(@RequestBody Auth_Entity authEntity){
@@ -121,11 +139,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
-
-
-
-
-
 }
+
+
+

@@ -14,6 +14,8 @@ public class UserRequest {
  private String Address;
  private String Email;
  private String designation;
+ private String state;
+ private String country;
 
 
 

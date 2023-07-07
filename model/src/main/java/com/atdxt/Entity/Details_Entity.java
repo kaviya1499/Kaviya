@@ -3,8 +3,11 @@ package com.atdxt.Entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @Entity
 @Table(name= "userdetails")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Details_Entity {
 
     @Id
@@ -35,6 +39,15 @@ public class Details_Entity {
     @Column(name = "modified")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Kolkata")
     private LocalDateTime modified;
+
+
+
+
+
+
+    private String state;
+
+    private String country;
 
     public String getFormattedDateTime(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

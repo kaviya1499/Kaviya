@@ -40,6 +40,11 @@ public class UserEntity {
 
 
 
+
+
+
+
+
     public String getFormattedDateTime(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return dateTime.format(formatter);
@@ -70,67 +75,4 @@ public class UserEntity {
     }
 
 
-
-
-
-
-   /*
-
-    @PrePersist
-    protected void onCreate() {
-        createdon = LocalDateTime.now();
-        modified = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        modified = LocalDateTime.now();
-    }
-
-
-
-
-
-
-   public UserEntity() {
-    }
-
-    public UserEntity(String name, String age, String address) {
-        this.Name = name;
-        this.Age = age;
-        this.Address = address;
-    }
-
-    public int getId() {
-        return Id;
-    }
-
-    public void setId(int id) {
-        Id = id;
-    }
-
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
-    public String getAge() {
-        return Age;
-    }
-
-    public void setAge(String age) {
-        Age = age;
-    }
-
-    public String getAddress() {
-        return Address;
-    }
-
-    public void setAddress(String address) {
-        Address = address;
-    }*/
 }
