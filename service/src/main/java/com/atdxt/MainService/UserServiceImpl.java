@@ -88,6 +88,8 @@ public class UserServiceImpl implements UserService {
                 user.setDetailsEntity(details);
             }
 
+            
+
             details.setEmail(userreq.getEmail());
             details.setDesignation(userreq.getDesignation());
             details.setState(userreq.getState());
@@ -137,6 +139,24 @@ public class UserServiceImpl implements UserService {
         byte[] decodedBytes = Base64.getDecoder().decode(encodedValue);
         return new String(decodedBytes);
     }
+
+
+
+
+    private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    private static final Set<String> UNIQUE_EMAILS = new HashSet<>();
+
+    public boolean isValid(String email) {
+        return EMAIL_REGEX_PATTERN.matcher(email).matches();
+    }
+
+    public boolean isUnique(String email) {
+        if (UNIQUE_EMAILS.contains(email)) {
+            return true; // Email is not unique
+        } else {
+            UNIQUE_EMAILS.add(email);
+            return false; // Email is unique
+        }
 
 
 }

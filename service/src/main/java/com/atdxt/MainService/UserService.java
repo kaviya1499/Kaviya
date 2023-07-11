@@ -18,6 +18,9 @@ public interface UserService {
     Auth_Entity CreateAuth(Auth_Entity authEntity);
     List<AuthDecode> getAllAuth();
 
+    boolean isValid(String email);
+    boolean isUnique(String email);
+
 
 }
 
