@@ -1,6 +1,7 @@
 package com.atdxt.ControllerService;
 
 import com.atdxt.Entity.*;
+
 import com.atdxt.MainService.UserService;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
@@ -66,10 +67,10 @@ public class UserControl {
 
     @PostMapping
     public ResponseEntity<Object> createUser( @RequestBody UserRequest userreq){
-        if (!EmailValidator.isValid(userreq.getEmail())) {
+        if (!userService.isValid(userreq.getEmail())) {
             return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() + " ' Invalid email address provided.");
         }
-        if (!EmailValidator.isUnique(userreq.getEmail())) {
+        if (!userService.isEmailUnique(userreq.getEmail())) {
             return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() +" ' Email Already Exists(Duplicate entry)");
         }
 
@@ -102,7 +103,12 @@ public class UserControl {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserEntity> UpdateUser(@PathVariable("id") Integer userId, @RequestBody UserRequest userreq){
+    public ResponseEntity<Object> UpdateUser(@PathVariable("id") Integer userId, @RequestBody UserRequest userreq){
+
+        if (!userService.isValid(userreq.getEmail())) {
+            return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() + " ' Invalid email address provided.");
+        }
+
       try {
           UserEntity updatedUser = userService.updateUser(userId, userreq);
           if (updatedUser != null) {
@@ -152,23 +158,7 @@ public class UserControl {
 }
 
 
-class EmailValidator {
-    private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final Set<String> UNIQUE_EMAILS = new HashSet<>();
 
-    public static boolean isValid(String email) {
-        return EMAIL_REGEX_PATTERN.matcher(email).matches();
-    }
-
-    public static boolean isUnique(String email) {
-        if (UNIQUE_EMAILS.contains(email)) {
-            return true; // Email is not unique
-        } else {
-            UNIQUE_EMAILS.add(email);
-            return false; // Email is unique
-        }
-    }
-}
 
 
 

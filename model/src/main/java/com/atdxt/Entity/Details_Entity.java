@@ -26,7 +26,7 @@ public class Details_Entity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int detid;
-    @Column(name="email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name= "designation")

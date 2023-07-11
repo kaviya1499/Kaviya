@@ -11,11 +11,15 @@ import lombok.Setter;
 public class AuthDecode {
     private String username;
     private String password;
+    private String createdon;
+    private String modified;
 
 
-    public AuthDecode(String username, String password) {
+    public AuthDecode(String username, String password, String createdon, String modified) {
         this.username = username;
         this.password = password;
+        this.createdon= createdon;
+        this.modified= modified;
 
     }
 }

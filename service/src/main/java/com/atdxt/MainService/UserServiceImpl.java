@@ -4,12 +4,15 @@ import com.atdxt.Entity.*;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }*/
 
-    public UserEntity createUser(@Valid @RequestBody UserRequest userreq) {
+    public UserEntity createUser( @RequestBody UserRequest userreq) {
         Details_Entity det = new Details_Entity();
         det.setEmail(userreq.getEmail());
         det.setDesignation(userreq.getDesignation());
@@ -88,7 +91,15 @@ public class UserServiceImpl implements UserService {
                 user.setDetailsEntity(details);
             }
 
-            details.setEmail(userreq.getEmail());
+
+            String email = userreq.getEmail();
+
+            if(email != null){
+                details.setEmail(userreq.getEmail());
+            }
+
+
+            details.setEmail(email);
             details.setDesignation(userreq.getDesignation());
             details.setState(userreq.getState());
             details.setCountry(userreq.getCountry());
@@ -98,14 +109,16 @@ public class UserServiceImpl implements UserService {
             user.setAge(userreq.getAge());
             user.setAddress(userreq.getAddress());
 
-            return userRepository.save(user);
+            user = userRepository.save(user);
+
+            return user;
+
+
         }
 
         return null;
 
     }
-
-
 
 
     @Override
@@ -129,7 +142,7 @@ public class UserServiceImpl implements UserService {
 
     private List<AuthDecode> decodePasswords(List<Auth_Entity> authEntities) {
         return authEntities.stream()
-                .map(authEntity -> new AuthDecode(authEntity.getUsername(), decodeBase64(authEntity.getPassword())))
+                .map(authEntity -> new AuthDecode(authEntity.getUsername(), decodeBase64(authEntity.getPassword()), authEntity.getCreatedon(), authEntity.getModified()))
                 .collect(Collectors.toList());
     }
 
@@ -139,7 +152,39 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
+
+
+
+
+
+
+    private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    private static final Set<String> UNIQUE_EMAILS = new HashSet<>();
+
+    public boolean isValid(String email) {
+        return EMAIL_REGEX_PATTERN.matcher(email).matches();
+    }
+
+  /*  public boolean isUnique(String email) {
+        if (UNIQUE_EMAILS.contains(email)) {
+            return true; // Email is not unique
+        } else {
+            UNIQUE_EMAILS.add(email);
+            return false; // Email is unique
+        }
+    }*/
+
+    public boolean isEmailUnique(String email) {
+        Optional<Details_Entity> existingUser = detailsRepository.findByEmail(email);
+        return existingUser.isEmpty();
+    }
+
+
+
 }
+
+
 
 
 
