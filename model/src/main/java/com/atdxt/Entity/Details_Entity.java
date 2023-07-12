@@ -25,8 +25,8 @@ public class Details_Entity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int detid;
-    @Column(name = "email", unique = true)
+    private Integer detid;
+    @Column(name = "email")
     private String email;
 
     @Column(name= "designation")
@@ -45,8 +45,10 @@ public class Details_Entity {
 
 
 
+    @Column(name="state")
     private String state;
 
+    @Column(name="country")
     private String country;
 
     public String getFormattedDateTime(LocalDateTime dateTime) {
@@ -68,10 +70,6 @@ public class Details_Entity {
     protected void onUpdate() {
         modified = LocalDateTime.now();
     }
-
-
-
-
 
 
 

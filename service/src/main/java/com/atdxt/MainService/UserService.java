@@ -19,7 +19,8 @@ public interface UserService {
     List<AuthDecode> getAllAuth();
 
      boolean isValid(String email);
-    boolean isEmailUnique(String email);
+    boolean isEmailUnique1(String email);
+    boolean isEmailUnique(String email,Integer id);
 
 
 }

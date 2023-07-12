@@ -21,12 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 
 import java.util.*;
@@ -52,16 +54,18 @@ public class UserControl {
 
 
     @GetMapping
-    public ResponseEntity<List<UserEntity>> getAllUsers(){
+    public ModelAndView getAllUsers(){
         try {
             logging.debug("Debug messages.......... ");
 
             List<UserEntity> users = userService.getAllUsers();
             logging.info("Fetched Users {}",users.size());
-            return new ResponseEntity<>(users, HttpStatus.OK);
+            ModelAndView modelAndView = new ModelAndView("users");
+            modelAndView.addObject("users", users);
+            return modelAndView;
         }catch (Exception e) {
             logging.error("Error occurred while fetching users: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ModelAndView("error", "errorMessage", e.getMessage());
         }
     }
 
@@ -70,7 +74,8 @@ public class UserControl {
         if (!userService.isValid(userreq.getEmail())) {
             return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() + " ' Invalid email address provided.");
         }
-        if (!userService.isEmailUnique(userreq.getEmail())) {
+        Integer id = null;
+        if (!userService.isEmailUnique1(userreq.getEmail())) {
             return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() +" ' Email Already Exists(Duplicate entry)");
         }
 
@@ -91,22 +96,29 @@ public class UserControl {
 
 
     @GetMapping("{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable("id") Integer userId){
+    public ModelAndView getUserById(@PathVariable("id") Integer userId){
         try {
             //int res = 10/0;
-            UserEntity userEntity = userService.getUserById(userId);
-            return new ResponseEntity<>(userEntity, HttpStatus.OK);
+            UserEntity users = userService.getUserById(userId);
+            ModelAndView modelAndView = new ModelAndView("users");
+            modelAndView.addObject("users", users);
+            return modelAndView;
+
         }catch (Exception e) {
             logging.error("Error occurred while fetching user : {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ModelAndView("error", "errorMessage", e.getMessage());
         }
     }
 
     @PutMapping("{id}")
     public ResponseEntity<Object> UpdateUser(@PathVariable("id") Integer userId, @RequestBody UserRequest userreq){
 
+
         if (!userService.isValid(userreq.getEmail())) {
             return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() + " ' Invalid email address provided.");
+        }
+        if (userService.isEmailUnique(userreq.getEmail(),userId)) {
+            return ResponseEntity.badRequest().body("Email Id: ' "+ userreq.getEmail() +" ' Email Already Exists(Duplicate entry)");
         }
 
       try {

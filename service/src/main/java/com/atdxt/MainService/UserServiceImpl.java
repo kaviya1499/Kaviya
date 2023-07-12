@@ -39,12 +39,13 @@ public class UserServiceImpl implements UserService {
     }*/
 
     @Override
-       public List<UserEntity> getAllUsers() {
+    public List<UserEntity> getAllUsers() {
 
         return userRepository.findAll();
 
 
     }
+
 
 
 
@@ -175,10 +176,39 @@ public class UserServiceImpl implements UserService {
         }
     }*/
 
-    public boolean isEmailUnique(String email) {
+    public boolean isEmailUnique1(String email) {
         Optional<Details_Entity> existingUser = detailsRepository.findByEmail(email);
+        System.out.println(existingUser+"------------");
         return existingUser.isEmpty();
     }
+
+
+   public boolean isEmailUnique(String email,Integer id) {
+       Optional<Details_Entity> userOptional = detailsRepository.findByEmail(email);
+       if (userOptional.isPresent()) {
+           Details_Entity existingUser = userOptional.get();
+           return !existingUser.getDetid().equals(id);
+       }
+       return false;
+
+    }
+
+
+
+  /* public boolean isEmailUnique(String email,Integer id) {
+       Optional<Details_Entity> userOptional = detailsRepository.findByEmail(email);
+       if (userOptional.isPresent()) {
+           Details_Entity existingUser = userOptional.get();
+
+           // For existing users (updating), check if the email belongs to a different user
+           if (existingUser.getDetid() != id) {
+               return true; // Email is not unique
+           }
+       }
+
+       // For new users (creating), there are no conflicts, so the email is considered unique
+       return true;
+    }*/
 
 
 

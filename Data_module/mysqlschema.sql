@@ -75,3 +75,6 @@ ALTER TABLE `userdetails`
 ADD `state` VARCHAR(255);
 ALTER TABLE `userdetails`
 ADD `country` VARCHAR(255);
+
+ALTER TABLE `userdetails` ADD CONSTRAINT `email_unique` UNIQUE (`email`);
+
