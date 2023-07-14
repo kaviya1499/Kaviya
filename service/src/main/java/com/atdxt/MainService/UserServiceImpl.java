@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity updateUser(Integer userId, @RequestBody UserRequest userreq) {
+    public UserEntity updateUser(Integer userId, @ModelAttribute("userreq") UserRequest userreq) {
         //UserEntity user = userRepository.findById(userEntity.getId()).get();
         Optional<UserEntity> optionalUser = userRepository.findById(userId);
 
@@ -195,20 +196,13 @@ public class UserServiceImpl implements UserService {
 
 
 
-  /* public boolean isEmailUnique(String email,Integer id) {
-       Optional<Details_Entity> userOptional = detailsRepository.findByEmail(email);
-       if (userOptional.isPresent()) {
-           Details_Entity existingUser = userOptional.get();
+    public boolean isValidName(String name) {
+        // Regular expression pattern
+        String pattern = "^[a-zA-Z\\s]+$";
 
-           // For existing users (updating), check if the email belongs to a different user
-           if (existingUser.getDetid() != id) {
-               return true; // Email is not unique
-           }
-       }
-
-       // For new users (creating), there are no conflicts, so the email is considered unique
-       return true;
-    }*/
+        // Check if the name matches the pattern
+        return !name.matches(pattern);
+    }
 
 
 

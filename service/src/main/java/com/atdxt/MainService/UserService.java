@@ -21,6 +21,8 @@ public interface UserService {
      boolean isValid(String email);
     boolean isEmailUnique1(String email);
     boolean isEmailUnique(String email,Integer id);
+    boolean isValidName(String name);
+
 
 
 }
