@@ -38,6 +38,10 @@ public class UserEntity {
     @OneToOne
     private Details_Entity detailsEntity;
 
+    @JoinColumn(name = "auid")
+    @OneToOne
+    private Auth_Entity authEntity;
+
 
 
 

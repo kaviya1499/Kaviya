@@ -20,6 +20,9 @@ public class UserRequest {
  private String designation;
  private String state;
  private String country;
+ private String username;
+ private String password;
+ private String confirm_password;
 
 
 

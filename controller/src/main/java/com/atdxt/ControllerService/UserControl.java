@@ -3,6 +3,7 @@ package com.atdxt.ControllerService;
 import com.atdxt.Entity.*;
 
 import com.atdxt.MainService.UserService;
+import com.atdxt.MainService.UserServiceImpl;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
@@ -16,10 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +55,11 @@ public class UserControl {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
 
 
@@ -85,12 +98,28 @@ public class UserControl {
         return modelAndView;
     }
 
+
     @GetMapping("/getall")
     public ModelAndView getAllUsers() {
         try {
             logging.debug("Debug messages.......... ");
 
             List<UserEntity> users = userService.getAllUsers();
+
+          /*  for(UserEntity user:users){
+                Auth_Entity authEntity=user.getAuthEntity();
+
+                if(authEntity != null){
+                    String decodepassword= new String(java.util.Base64.getDecoder().decode(authEntity.getPassword()));
+                   // String decodepassword=new String(passwordEncoder.encode(authEntity.getPassword()));
+                    authEntity.setPassword(decodepassword);
+                    String decodeconfirmpassword= new String(java.util.Base64.getDecoder().decode(authEntity.getConfirm_password()));
+                   // String decodeconfirmpassword=new String(passwordEncoder.encode(authEntity.getConfirm_password()));
+                    authEntity.setConfirm_password(decodeconfirmpassword);
+
+                }
+            }*/
+
             logging.info("Fetched Users {}", users.size());
             ModelAndView modelAndView = new ModelAndView("users");
             modelAndView.addObject("users", users);
@@ -130,18 +159,22 @@ public class UserControl {
     @PostMapping("/insert")
     public RedirectView createUser(@ModelAttribute("userreq") UserRequest userreq, RedirectAttributes redirectAttributes) {
 
+        System.out.println(userreq.getEmail());
 
         if((userreq.getName()).isEmpty()){
             String errorMessage = "User name is mandatory.";
             redirectAttributes.addFlashAttribute("name_error", errorMessage);
+
             return new RedirectView("/register", true);
         }
+
 
         if(userService.isValidName(userreq.getName())){
             String errorMessage = "User name Should not contains Numbers and special symbol.";
             redirectAttributes.addFlashAttribute("name_error", errorMessage);
             return new RedirectView("/register", true);
         }
+
 
 
         if((userreq.getEmail()).isEmpty()){
@@ -154,6 +187,9 @@ public class UserControl {
 
             String errorMessage = "Invalid email address provided.";
             redirectAttributes.addFlashAttribute("email_error", errorMessage);
+            String email = userreq.getEmail();
+            System.out.println(email);
+            redirectAttributes.addFlashAttribute("email_value", email);
             return new RedirectView("/register", true);
             //return ResponseEntity.badRequest().body("Email Id: ' " + userreq.getEmail() + " ' Invalid email address provided.");
         }
@@ -164,6 +200,39 @@ public class UserControl {
             return new RedirectView("/register", true);
           //  return ResponseEntity.badRequest().body("Email Id: ' " + userreq.getEmail() + " ' Email Already Exists(Duplicate entry)");
         }
+
+        if((userreq.getUsername()).isEmpty()){
+            String errorMessage = "Username is mandatory.";
+            redirectAttributes.addFlashAttribute("username_error", errorMessage);
+            return new RedirectView("/register", true);
+        }
+
+        if(!userService.isUsernameUnique(userreq.getUsername())){
+            String errorMessage = "Username already Exists.";
+            redirectAttributes.addFlashAttribute("username_error", errorMessage);
+            return new RedirectView("/register", true);
+        }
+
+        if((userreq.getPassword()).isEmpty()){
+            String errorMessage = "Password is mandatory.";
+            redirectAttributes.addFlashAttribute("password_error", errorMessage);
+            return new RedirectView("/register", true);
+        }
+        if((userreq.getConfirm_password()).isEmpty()){
+            String errorMessage = "Confirm Password is mandatory.";
+            redirectAttributes.addFlashAttribute("cpassword_error", errorMessage);
+            return new RedirectView("/register", true);
+        }
+
+        if(!userreq.getPassword().equals(userreq.getConfirm_password())){
+            String errorMessage = "Password and confirm password should be same";
+            redirectAttributes.addFlashAttribute("cpassword_error", errorMessage);
+            return new RedirectView("/register", true);
+        }
+
+
+
+
 
         try {
             UserEntity savedUser = userService.createUser(userreq);
@@ -203,6 +272,19 @@ public class UserControl {
         try {
             //int res = 10/0;
             UserEntity users = userService.getUserById(userId);
+
+
+                Auth_Entity authEntity=users.getAuthEntity();
+
+             /*   if(authEntity != null){
+                    String decodepassword= new String(java.util.Base64.getDecoder().decode(authEntity.getPassword()));
+                    authEntity.setPassword(decodepassword);
+                    String decodeconfirmpassword= new String(java.util.Base64.getDecoder().decode(authEntity.getConfirm_password()));
+                    authEntity.setConfirm_password(decodeconfirmpassword);
+
+                }*/
+
+
             ModelAndView modelAndView = new ModelAndView("users");
             modelAndView.addObject("users", users);
             return modelAndView;
@@ -297,6 +379,66 @@ public class UserControl {
         } catch (Exception e) {
             logging.error("Error occurred while fetching users: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+
+
+    @GetMapping("/getbyid/{id}")
+    public ResponseEntity<UserEntity> getUsersById(@PathVariable("id") Integer userId){
+        try {
+            //int res = 10/0;
+            UserEntity userEntity = userService.getUserById(userId);
+            return new ResponseEntity<>(userEntity, HttpStatus.OK);
+        }catch (Exception e) {
+            logging.error("Error occurred while fetching user : {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @Autowired
+    private AuthRepository authRepository;
+
+
+    @GetMapping("/getname/{username}")
+    public UserEntity getUserIdByUsername(@PathVariable("username") String username) {
+
+            Integer userId = authRepository.findIdByUsername(username);
+
+            UserEntity users = userService.getUserById(userId);
+            return users;
+
+    }
+
+
+
+    @GetMapping("/user")
+    public String getUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return "User Details: " + userDetails.getUsername();
+    }
+
+
+    @GetMapping("/getuserdetails")
+    public RedirectView getUserBynames(@AuthenticationPrincipal UserDetails userDetails,RedirectAttributes redirectAttributes) {
+        try {
+
+            String username=userDetails.getUsername();
+            if(username.equals("admin")){
+                return new RedirectView("/getall", true);
+            }
+            else{
+                Integer userId = authRepository.findIdByUsername(username);
+                return new RedirectView("/get/"+userId, true);
+            }
+
+
+
+        } catch (Exception e) {
+            logging.error("Error occurred while fetching user : {}", e.getMessage());
+            return new RedirectView("/", true);
         }
     }
 

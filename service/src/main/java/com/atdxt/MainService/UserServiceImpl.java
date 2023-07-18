@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,12 +36,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthRepository authRepository;
 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     /*public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }*/
 
     @Override
     public List<UserEntity> getAllUsers() {
+
+        List<UserEntity> users = userRepository.findAll();
+
 
         return userRepository.findAll();
 
@@ -60,6 +68,8 @@ public class UserServiceImpl implements UserService {
     }*/
 
     public UserEntity createUser( @RequestBody UserRequest userreq) {
+
+        System.out.println(userreq.getUsername()+userreq.getPassword());
         Details_Entity det = new Details_Entity();
         det.setEmail(userreq.getEmail());
         det.setDesignation(userreq.getDesignation());
@@ -67,8 +77,23 @@ public class UserServiceImpl implements UserService {
         det.setCountry(userreq.getCountry());
         det = detailsRepository.save(det);
 
+
+        Auth_Entity auth=new Auth_Entity();
+        auth.setUsername(userreq.getUsername());
+        String password = userreq.getPassword();
+
+       // String passwordEncode= Base64.getEncoder().encodeToString(password.getBytes());
+        String encodepassword=passwordEncoder.encode(password);
+        auth.setPassword(encodepassword);
+        String confirm_password=userreq.getConfirm_password();
+       // String confirmpasswordEncode= Base64.getEncoder().encodeToString(confirm_password.getBytes());
+        String confirmpasswordEncode=passwordEncoder.encode(confirm_password);
+        auth.setConfirm_password(confirmpasswordEncode);
+        auth=authRepository.save(auth);
+
         UserEntity userEntity = new UserEntity(userreq);
         userEntity.setDetailsEntity(det);
+        userEntity.setAuthEntity(auth);
         return userRepository.save(userEntity);
 
     }
@@ -85,6 +110,7 @@ public class UserServiceImpl implements UserService {
         //UserEntity user = userRepository.findById(userEntity.getId()).get();
         Optional<UserEntity> optionalUser = userRepository.findById(userId);
 
+
         if (optionalUser.isPresent()) {
             UserEntity user = optionalUser.get();
             Details_Entity details = user.getDetailsEntity();
@@ -92,6 +118,15 @@ public class UserServiceImpl implements UserService {
                 details = new Details_Entity();
                 user.setDetailsEntity(details);
             }
+            Auth_Entity auth= user.getAuthEntity();
+            if(auth == null){
+                auth=new Auth_Entity();
+                user.setAuthEntity(auth);
+            }
+
+            auth.setUsername(userreq.getUsername());
+             auth.setPassword(userreq.getPassword());
+            auth=authRepository.save(auth);
 
 
             String email = userreq.getEmail();
@@ -144,7 +179,7 @@ public class UserServiceImpl implements UserService {
 
     private List<AuthDecode> decodePasswords(List<Auth_Entity> authEntities) {
         return authEntities.stream()
-                .map(authEntity -> new AuthDecode(authEntity.getUsername(), decodeBase64(authEntity.getPassword()), authEntity.getCreatedon(), authEntity.getModified()))
+                .map(authEntity -> new AuthDecode(authEntity.getUsername(), decodeBase64(authEntity.getPassword()), authEntity.getCreatedon(), authEntity.getModified(),decodeBase64(authEntity.getConfirm_password())))
                 .collect(Collectors.toList());
     }
 
@@ -179,8 +214,7 @@ public class UserServiceImpl implements UserService {
 
     public boolean isEmailUnique1(String email) {
         Optional<Details_Entity> existingUser = detailsRepository.findByEmail(email);
-        System.out.println(existingUser+"------------");
-        return existingUser.isEmpty();
+               return existingUser.isEmpty();
     }
 
 
@@ -202,6 +236,11 @@ public class UserServiceImpl implements UserService {
 
         // Check if the name matches the pattern
         return !name.matches(pattern);
+    }
+
+    public boolean isUsernameUnique(String username) {
+        Optional<Auth_Entity> existingUsername = authRepository.findByUsername(username);
+        return existingUsername.isEmpty();
     }
 
 

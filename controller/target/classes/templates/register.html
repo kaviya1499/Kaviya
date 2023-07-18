@@ -24,7 +24,7 @@
             <p th:text="${name_error}" style="color:red"></p>
         </div>
         <input type="text" th:field="*{age}" placeholder="age" class="form-control mb-4 col-4">
-        <input type="text" th:field="*{email}" placeholder="email" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{email}" placeholder="email" class="form-control mb-4 col-4" th:value="${email_value != null} ? ${email_value} : ''">
         <div th:if="${email_error}" class="error-message">
             <p th:text="${email_error}" style="color:red"></p>
         </div>
@@ -32,6 +32,18 @@
         <input type="text" th:field="*{address}" placeholder="address" class="form-control mb-4 col-4">
           <input type="text" th:field="*{state}" placeholder="state" class="form-control mb-4 col-4">
         <input type="text" th:field="*{country}" placeholder="country" class="form-control mb-4 col-4">
+        <input type="text" th:field="*{username}" placeholder="username" class="form-control mb-4 col-4">
+        <div th:if="${username_error}" class="error-message">
+            <p th:text="${username_error}" style="color:red"></p>
+        </div>
+        <input type="text" th:field="*{password}" placeholder="password" class="form-control mb-4 col-4">
+        <div th:if="${password_error}" class="error-message">
+            <p th:text="${password_error}" style="color:red"></p>
+        </div>
+        <input type="text" th:field="*{confirm_password}" placeholder="confirm password" class="form-control mb-4 col-4">
+        <div th:if="${cpassword_error}" class="error-message">
+            <p th:text="${cpassword_error}" style="color:red"></p>
+        </div>
 
         <button type="submit" class="btn btn-info col-2"> Save user</button>
     </form>

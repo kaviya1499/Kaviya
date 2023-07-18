@@ -77,4 +77,5 @@ ALTER TABLE `userdetails`
 ADD `country` VARCHAR(255);
 
 ALTER TABLE `userdetails` ADD CONSTRAINT `email_unique` UNIQUE (`email`);
+ALTER TABLE `auth_table` ADD confirm_password VARCHAR(255);
 

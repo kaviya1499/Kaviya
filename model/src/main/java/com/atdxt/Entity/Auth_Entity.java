@@ -12,8 +12,6 @@ import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name="auth_table")
 public class Auth_Entity {
@@ -25,10 +23,21 @@ public class Auth_Entity {
     @Column(name="password")
     private String password;
 
+
     @Column(name="createdon")
     private String createdon;
     @Column(name="modified")
     private String modified;
+
+    @Column(name="confirm_password")
+    private String confirm_password;
+
+    @Column(name = "roles")
+    private String roles="USER";
+
+    public Auth_Entity() {
+
+    }
 
     public String getFormattedDateTime(LocalDateTime dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -53,6 +62,6 @@ public class Auth_Entity {
 
 
 
-    public Auth_Entity(String username, String decodedPassword, String createdon, String modified) {
+    public Auth_Entity(String username, String decodedPassword, String createdon, String modified, String confirm_password, String roles) {
     }
 }

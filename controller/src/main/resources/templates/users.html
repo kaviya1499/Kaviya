@@ -85,6 +85,41 @@ tr:nth-child(even) {
 
       </center>
 
+      <br>
+      <br>
+
+
+      <center>
+        <h3 style="text-align:center;color:#8C55AA;font-size:40px">Authentication table List </h3>
+        <div style="overflow-x: auto;">
+
+          <table>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Password</th>
+              <th>Confirm Password</th>
+              <th>Created on</th>
+              <th>Last modified</th>
+
+            </tr>
+
+            <tr  th:each="users : ${users}">
+              <td th:text="${users.authEntity.id}">ID</td>
+              <td th:text="${users.authEntity.username}">Username</td>
+              <td th:text="${users.authEntity.password}">Password</td>
+              <td th:text="${users.authEntity.confirm_password}">Confirm Password</td>
+              <td th:text="${users.authEntity.createdon}">createdon</td>
+              <td th:text="${users.authEntity.modified}">lastmodified</td>
+
+
+
+            </tr>
+          </table>
+        </div>
+
+      </center>
+
 
 
 
