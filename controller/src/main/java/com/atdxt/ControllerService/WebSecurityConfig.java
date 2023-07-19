@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
@@ -71,6 +72,14 @@ public class WebSecurityConfig {
                 .userDetailsService(myUserDetailsService)
                 .formLogin(formLogin->formLogin.defaultSuccessUrl("/getuserdetails"))
                 .httpBasic(withDefaults());
+
+     /*   http
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true)
+                        .expiredUrl("/login?invalid-session=true")
+                );*/
+
         return http.build();
 
 
@@ -82,6 +91,8 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 
 
 

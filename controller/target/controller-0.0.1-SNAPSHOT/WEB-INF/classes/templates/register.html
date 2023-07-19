@@ -24,8 +24,8 @@
             <p th:text="${name_error}" style="color:red"></p>
         </div>
         <input type="text" th:field="*{age}" placeholder="age" class="form-control mb-4 col-4">
-        <input type="text" th:field="*{email}" placeholder="email" class="form-control mb-4 col-4" th:value="${email_value != null} ? ${email_value} : ''">
-        <div th:if="${email_error}" class="error-message">
+        <input type="text" th:field="*{email}" placeholder="email" class="form-control mb-4 col-4" th:attr="value=${email_value != null} ? ${email_value} : ''">
+               <div th:if="${email_error}" class="error-message">
             <p th:text="${email_error}" style="color:red"></p>
         </div>
         <input type="text" th:field="*{designation}" placeholder="designation" class="form-control mb-4 col-4">
