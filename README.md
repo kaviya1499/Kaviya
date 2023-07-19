@@ -120,8 +120,11 @@ Use Terminal or Api testing tool like postman:
 *   **Repossitory name:** springboot_docker
 
 
+
 # Usage
 Once the application is deployed, you can interact with it using HTTP requests.
 1. Create: POST /entity - Create a new entity by sending a JSON payload with the required data.
 2. Read: GET /entity - Retrieve an entity by its unique identifier.
+
+
 

@@ -48,10 +48,7 @@
 	</dependency>
 
 
-		<!--<dependency>
-			<groupId>org.springframework.session</groupId>
-			<artifactId>spring-session-jdbc</artifactId>
-		</dependency>-->
+
 
 
 
@@ -152,6 +149,24 @@
 		</dependencies>
 	</dependencyManagement>
 
+
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
+
+
 	<build>
 		<plugins>
 			<plugin>
@@ -171,5 +186,9 @@
 		<module>repository</module>
 		<module>controller</module>
 	</modules>
+
+
+
+
 
 </project>
