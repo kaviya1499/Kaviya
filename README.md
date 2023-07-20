@@ -71,15 +71,8 @@ Once the build is successful, execute the appropriate command:
 
 To Get API Response open your Web Browser and enter the API, for example
 
-       http://localhost:8080/getinfo
+       http://localhost:8080/getall
 
-To Get Response in Terminal
-
-**Curl :**  Make sure you have Curl installed on your system and run the command:
- 
-       To Get: curl http://localhost:8080/getinfo
-       To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://localhost:8080/getinfo
-       EG : curl -X POST -H "Content-Type: Application/json" -d '{"address":"america","age":"22","name":"kavi"}' http://localhost:8080/getinfo
 
  **Command Line to access EC2 instance:**
 
@@ -119,6 +112,20 @@ Use Terminal or Api testing tool like postman:
 *   **password:** Kavikasi@99
 *   **Repossitory name:** springboot_docker
 
+## Two properties file links
+To run local database 
+
+     mvn clean install -Plocal
+     mvn spring-boot:run -Plocal
+
+To run RDS database
+
+    mvn clean install -Pprod
+    mvn spring-boot:run -Pprod
+
+# Login Credentials for the application
+*   **Username:** admin
+*   **password:** admin@123
 
 
 # Usage
