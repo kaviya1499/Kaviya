@@ -16,6 +16,7 @@ public class UserRequest {
  private String Name;
  private String Age;
  private String Address;
+ private String imgurl;
  private String Email;
  private String designation;
  private String state;

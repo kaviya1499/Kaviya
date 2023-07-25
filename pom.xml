@@ -159,9 +159,9 @@
 
 	<profiles>
 		<profile>
-			<id>local</id>
+			<id>dev</id>
 			<properties>
-				<spring.profiles.active>local</spring.profiles.active>
+				<spring.profiles.active>dev</spring.profiles.active>
 			</properties>
 		</profile>
 		<profile>

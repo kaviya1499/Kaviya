@@ -18,7 +18,7 @@
 <center>
     <h2>Add User</h2>
 
-    <form action="#" th:action="@{/insert}" th:object="${userreq}" method="POST">
+    <form action="#" th:action="@{/insert}" th:object="${userreq}" method="POST" enctype="multipart/form-data">
         <input type="text" th:field="*{name}" placeholder="name" class="form-control mb-4 col-4">
         <div th:if="${name_error}" class="error-message">
             <p th:text="${name_error}" style="color:red"></p>
@@ -44,6 +44,8 @@
         <div th:if="${cpassword_error}" class="error-message">
             <p th:text="${cpassword_error}" style="color:red"></p>
         </div>
+
+        <input type="file" name="file" id="file" accept="image/*" >
 
         <button type="submit" class="btn btn-info col-2"> Save user</button>
     </form>

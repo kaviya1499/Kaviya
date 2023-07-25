@@ -92,6 +92,8 @@ public class UserServiceImpl implements UserService {
         auth=authRepository.save(auth);
 
         UserEntity userEntity = new UserEntity(userreq);
+        System.out.println(userreq.getImgurl());
+        userEntity.setImgurl(userreq.getImgurl());
         userEntity.setDetailsEntity(det);
         userEntity.setAuthEntity(auth);
         return userRepository.save(userEntity);

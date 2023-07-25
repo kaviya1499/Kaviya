@@ -1,5 +1,7 @@
 package com.atdxt.ControllerService;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.atdxt.Entity.*;
 
 import com.atdxt.MainService.UserService;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
@@ -36,6 +39,7 @@ import org.springframework.validation.ObjectError;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -58,6 +62,8 @@ public class UserControl {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private AmazonS3 s3;
 
 
 
@@ -157,7 +163,7 @@ public class UserControl {
 
 
     @PostMapping("/insert")
-    public RedirectView createUser(@ModelAttribute("userreq") UserRequest userreq, RedirectAttributes redirectAttributes) {
+    public RedirectView createUser(@ModelAttribute("userreq") UserRequest userreq,@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
         System.out.println(userreq.getEmail());
 
@@ -198,7 +204,7 @@ public class UserControl {
             String errorMessage = "Email already Exists.";
             redirectAttributes.addFlashAttribute("email_error", errorMessage);
             return new RedirectView("/register", true);
-          //  return ResponseEntity.badRequest().body("Email Id: ' " + userreq.getEmail() + " ' Email Already Exists(Duplicate entry)");
+            //  return ResponseEntity.badRequest().body("Email Id: ' " + userreq.getEmail() + " ' Email Already Exists(Duplicate entry)");
         }
 
         if((userreq.getUsername()).isEmpty()){
@@ -231,7 +237,22 @@ public class UserControl {
         }
 
 
+/*
+        if (file.isEmpty()) {
+            // Handle the case where the user didn't upload an image
+            return new RedirectView("/register", true);
+        }*/
 
+        if(!file.isEmpty()) {
+
+            String fileName = file.getOriginalFilename();
+            // String bucketName = "kavi-dev-bucket"; // Replace with your actual S3 bucket name
+
+            String s3Url = uploadImageToS3Bucket(file, fileName, s3);
+            System.out.println(s3Url);
+            // Save the S3 URL in the local database
+            userreq.setImgurl(s3Url);
+        }
 
 
         try {
@@ -239,12 +260,37 @@ public class UserControl {
             logging.info("Users Inserted Successfully......");
 
             return new RedirectView("/login", true);
-          //  return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+            //  return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
 
         } catch (Exception e) {
             logging.error("Error occurred while Inserting : {}", e.getMessage());
             return new RedirectView("/home", true);
-           // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    private final Environment environment;
+
+    private String uploadImageToS3Bucket(MultipartFile imageFile, String fileName, AmazonS3 s3) {
+
+
+
+        try {
+            String bucketName = environment.getProperty("aws.bucketName");
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(imageFile.getContentType());
+            metadata.setContentLength(imageFile.getSize());
+
+            s3.putObject(bucketName, fileName, imageFile.getInputStream(), metadata);
+
+            // Generate the S3 URL for the uploaded image
+            String s3Url = "https://" + bucketName + ".s3.amazonaws.com/" + fileName;
+            return s3Url;
+        } catch (Exception e) {
+            // Handle the exception (e.g., log error, return a default URL, etc.)
+            e.printStackTrace();
+            return "error-url"; // Replace with your fallback URL or handle as needed
         }
     }
 
