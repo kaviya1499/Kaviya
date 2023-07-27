@@ -66,6 +66,13 @@ public class UserControl {
     private AmazonS3 s3;
 
 
+    @Autowired
+    private AuthRepository authRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
 
 
 
@@ -318,18 +325,7 @@ public class UserControl {
         try {
             //int res = 10/0;
             UserEntity users = userService.getUserById(userId);
-
-
-                Auth_Entity authEntity=users.getAuthEntity();
-
-             /*   if(authEntity != null){
-                    String decodepassword= new String(java.util.Base64.getDecoder().decode(authEntity.getPassword()));
-                    authEntity.setPassword(decodepassword);
-                    String decodeconfirmpassword= new String(java.util.Base64.getDecoder().decode(authEntity.getConfirm_password()));
-                    authEntity.setConfirm_password(decodeconfirmpassword);
-
-                }*/
-
+             Auth_Entity authEntity=users.getAuthEntity();
 
             ModelAndView modelAndView = new ModelAndView("users");
             modelAndView.addObject("users", users);
@@ -445,8 +441,6 @@ public class UserControl {
     }
 
 
-    @Autowired
-    private AuthRepository authRepository;
 
 
     @GetMapping("/getname/{username}")
@@ -464,7 +458,20 @@ public class UserControl {
     @GetMapping("/user")
     public String getUser(@AuthenticationPrincipal UserDetails userDetails) {
         return "User Details: " + userDetails.getUsername();
+
     }
+    @GetMapping("/userid")
+    public Integer getUseridbyauid(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        Integer auid = authRepository.findIdByUsername(username);
+        Auth_Entity authEntity = new Auth_Entity();
+        authEntity.setId(auid); // Set the auid in the authEntity
+        Integer userId = userRepository.findUserId(authEntity);
+        return userId;
+
+    }
+
+
 
 
     @GetMapping("/getuserdetails")
@@ -476,7 +483,10 @@ public class UserControl {
                 return new RedirectView("/getall", true);
             }
             else{
-                Integer userId = authRepository.findIdByUsername(username);
+                Integer auid = authRepository.findIdByUsername(username);
+                Auth_Entity authEntity = new Auth_Entity();
+                authEntity.setId(auid);
+                Integer userId = userRepository.findUserId(authEntity);
                 return new RedirectView("/get/"+userId, true);
             }
 

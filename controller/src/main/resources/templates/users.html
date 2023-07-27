@@ -62,7 +62,7 @@ tr:nth-child(even) {
               <th>Country</th>
               <th>Created on</th>
               <th>Last modified</th>
-              <th>Action</th>
+              <!--<th>Action</th>-->
               <th>img</th>
             </tr>
 
@@ -77,7 +77,7 @@ tr:nth-child(even) {
               <td th:text="${user.detailsEntity.country}">Country</td>
               <td th:text="${user.createdon}">createdon</td>
               <td th:text="${user.modified}">lastmodified</td>
-              <td><a th:href="@{/updateform/{id}(id=${user.id})}"><button class="btn btn-primary" style="width: 100px">Update</button></a></td>
+              <!--<td><a th:href="@{/updateform/{id}(id=${user.id})}"><button class="btn btn-primary" style="width: 100px">Update</button></a></td>-->
               <td><img th:src="${user.imgurl}"  style="height:100px;width:100px"></td>
 
             </tr>
