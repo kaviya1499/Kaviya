@@ -51,10 +51,13 @@ if [ "$PROFILE" = "dev" ]; then
    fi
  else
         echo "Building Spring Boot application with profile: $PROFILE"
-
+        sudo docker login
+        sudo chmod a+wr /var/run/docker.sock
         mvn clean install -P$PROFILE
         docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .
         docker run -p 8080:8080 --name $CONTAINER_NAME --network="host" $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
+        docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
+        docker push kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
 
  fi
 
@@ -73,11 +76,13 @@ elif [ "$PROFILE" = "prod" ]; then
  else
         echo "Building Spring Boot application with profile: $PROFILE"
 
+        sudo docker login
+        sudo chmod a+wr /var/run/docker.sock
         mvn clean install -P$PROFILE
         docker build -t $DOCKER_IMAGE_NAME_PROD:$DOCKER_IMAGE_TAG .
         docker run -p 8080:8080 --name $CONTAINER_NAME_PROD $DOCKER_IMAGE_NAME_PROD:$DOCKER_IMAGE_TAG
-
-
+        docker tag $DOCKER_IMAGE_NAME_PROD:$DOCKER_IMAGE_TAG kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
+        docker push kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
  fi
 fi
 

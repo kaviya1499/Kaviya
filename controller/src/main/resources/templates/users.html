@@ -70,11 +70,11 @@ tr:nth-child(even) {
               <td th:text="${user.id}">ID</td>
               <td th:text="${user.name}">Name</td>
               <td th:text="${user.age}">Age</td>
-              <td th:text="${user.detailsEntity.email}">Age</td>
-              <td th:text="${user.detailsEntity.designation}">Designation</td>
+              <td th:text="${user?.detailsEntity?.email}">Age</td>
+              <td th:text="${user?.detailsEntity?.designation}">Designation</td>
               <td th:text="${user.address}">Address</td>
-              <td th:text="${user.detailsEntity.state}">State</td>
-              <td th:text="${user.detailsEntity.country}">Country</td>
+              <td th:text="${user?.detailsEntity?.state}">State</td>
+              <td th:text="${user?.detailsEntity?.country}">Country</td>
               <td th:text="${user.createdon}">createdon</td>
               <td th:text="${user.modified}">lastmodified</td>
               <!--<td><a th:href="@{/updateform/{id}(id=${user.id})}"><button class="btn btn-primary" style="width: 100px">Update</button></a></td>-->
@@ -106,12 +106,12 @@ tr:nth-child(even) {
             </tr>
 
             <tr  th:each="users : ${users}">
-              <td th:text="${users.authEntity.id}">ID</td>
-              <td th:text="${users.authEntity.username}">Username</td>
-              <td th:text="${users.authEntity.password}">Password</td>
-              <td th:text="${users.authEntity.confirm_password}">Confirm Password</td>
-              <td th:text="${users.authEntity.createdon}">createdon</td>
-              <td th:text="${users.authEntity.modified}">lastmodified</td>
+              <td th:text="${users?.authEntity?.id}">ID</td>
+              <td th:text="${users?.authEntity?.username}">Username</td>
+              <td th:text="${users?.authEntity?.password}">Password</td>
+              <td th:text="${users?.authEntity?.confirm_password}">Confirm Password</td>
+              <td th:text="${users?.authEntity?.createdon}">createdon</td>
+              <td th:text="${users?.authEntity?.modified}">lastmodified</td>
 
 
 
