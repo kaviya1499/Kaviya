@@ -84,13 +84,13 @@ To Get API Response open your Web Browser and enter the API, for example
 
 To view the data available in EC2 & RDS, accessible via the URL provided below:
 
-    http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+    http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getall
 
 Use Terminal or Api testing tool like postman:
 
-    To Get: curl http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
-    To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
-    EG: curl -X POST -H "Content-Type: Application/json" -d '{"address": "london","age": "22","name":"kaviya"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getinfo
+    To Get: curl http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getall
+    To Post: curl -X POST -H "Content-Type: Application/json" -d '{"key1": "value1", "key2": "value2"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/insert
+    EG: curl -X POST -H "Content-Type: Application/json" -d '{"address": "london","age": "22","name":"kaviya"}' http://ec2-13-48-248-212.eu-north-1.compute.amazonaws.com:8080/getall
   
 # credentials
 * **Ec2 Instance name:** springapp
