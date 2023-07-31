@@ -11,10 +11,10 @@ PROFILE="$1"
 DOCKER_IMAGE_NAME="s3dockerimgdev_ps"
 CONTAINER_NAME="s3dockercontainerdev_ps"
 
-DOCKER_IMAGE_TAG="v2.2.3"  # Use any desired tag
+DOCKER_IMAGE_TAG="v2.2.2"  # Use any desired tag
 
-DOCKER_IMAGE_NAME_PROD="s3dockerimgprod"
-CONTAINER_NAME_PROD="s3dockercontainerprod"
+DOCKER_IMAGE_NAME_PROD="s3dockerimgprod_ps"
+CONTAINER_NAME_PROD="s3dockercontainerprod_ps"
 
 
 
@@ -51,13 +51,10 @@ if [ "$PROFILE" = "dev" ]; then
    fi
  else
         echo "Building Spring Boot application with profile: $PROFILE"
-        sudo docker login
-        sudo chmod a+wr /var/run/docker.sock
         mvn clean install -P$PROFILE
         docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG .
         docker run -p 8080:8080 --name $CONTAINER_NAME --network="host" $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
-        docker tag $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
-        docker push kaviya1499/springboot_docker:$DOCKER_IMAGE_TAG
+
 
  fi
 
@@ -76,7 +73,7 @@ elif [ "$PROFILE" = "prod" ]; then
  else
         echo "Building Spring Boot application with profile: $PROFILE"
 
-        sudo docker login
+        docker login
         sudo chmod a+wr /var/run/docker.sock
         mvn clean install -P$PROFILE
         docker build -t $DOCKER_IMAGE_NAME_PROD:$DOCKER_IMAGE_TAG .

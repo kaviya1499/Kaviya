@@ -36,11 +36,11 @@
         <div th:if="${username_error}" class="error-message">
             <p th:text="${username_error}" style="color:red"></p>
         </div>
-        <input type="text" th:field="*{password}" placeholder="password" class="form-control mb-4 col-4">
+        <input type="password" th:field="*{password}" placeholder="password" class="form-control mb-4 col-4">
         <div th:if="${password_error}" class="error-message">
             <p th:text="${password_error}" style="color:red"></p>
         </div>
-        <input type="text" th:field="*{confirm_password}" placeholder="confirm password" class="form-control mb-4 col-4">
+        <input type="password" th:field="*{confirm_password}" placeholder="confirm password" class="form-control mb-4 col-4">
         <div th:if="${cpassword_error}" class="error-message">
             <p th:text="${cpassword_error}" style="color:red"></p>
         </div>
