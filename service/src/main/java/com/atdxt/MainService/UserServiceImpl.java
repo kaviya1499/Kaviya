@@ -4,17 +4,22 @@ import com.atdxt.Entity.*;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -245,6 +250,34 @@ public class UserServiceImpl implements UserService {
     public boolean isUsernameUnique(String username) {
         Optional<Auth_Entity> existingUsername = authRepository.findByUsername(username);
         return existingUsername.isEmpty();
+    }
+
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    private final Environment environment;
+
+
+    @Override
+    public String sendMail(String to,String subject,String body) throws MessagingException {
+
+        String fromEmail = environment.getProperty("spring.mail.username");
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+        mimeMessageHelper.setFrom(fromEmail);
+        mimeMessageHelper.setTo(to);
+
+        mimeMessageHelper.setSubject(subject);
+        mimeMessageHelper.setText(body);
+
+
+
+        javaMailSender.send(mimeMessage);
+
+        return "mail send";
     }
 
 

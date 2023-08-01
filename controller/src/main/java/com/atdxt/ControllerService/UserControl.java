@@ -9,6 +9,9 @@ import com.atdxt.MainService.UserServiceImpl;
 import com.atdxt.RepositoryService.AuthRepository;
 import com.atdxt.RepositoryService.DetailsRepository;
 import com.atdxt.RepositoryService.UserRepository;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +29,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -263,6 +268,7 @@ public class UserControl {
 
 
         try {
+            userService.sendMail(userreq.getEmail(),"Registartion", userreq.getName()+" has successfully registered");
             UserEntity savedUser = userService.createUser(userreq);
             logging.info("Users Inserted Successfully......");
 
@@ -496,6 +502,47 @@ public class UserControl {
             logging.error("Error occurred while fetching user : {}", e.getMessage());
             return new RedirectView("/", true);
         }
+    }
+
+    @GetMapping("/login")
+    public ModelAndView getLogin() {
+        ModelAndView modelAndView = new ModelAndView("login");
+        return modelAndView;
+    }
+
+    @PostMapping("/login")
+    public RedirectView processLogin(@RequestParam("username") String username,
+                                     @RequestParam("password") String password,
+                                     HttpServletRequest request) {
+
+        try {
+            request.login(username, password);
+            return new RedirectView("/dashboard");
+        } catch (ServletException e) {
+
+            RedirectView redirectView = new RedirectView("/login");
+            redirectView.addStaticAttribute("error", "Invalid username or password");
+            return redirectView;
+        }
+    }
+
+
+    @GetMapping("/mail")
+    public ModelAndView getMail() {
+        ModelAndView modelAndView = new ModelAndView("mail");
+        return modelAndView;
+    }
+    @GetMapping("/passwordreset")
+    public ModelAndView getPasswordReset() {
+        ModelAndView modelAndView = new ModelAndView("passwordreset");
+        return modelAndView;
+    }
+
+
+    @PostMapping("/send")
+    public RedirectView sendMail(@RequestParam("email") String email) throws MessagingException {
+         userService.sendMail(email,"Password Reset", "http://localhost:8080/passwordreset");
+        return new RedirectView("/login", true);
     }
 
 

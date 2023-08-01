@@ -67,10 +67,15 @@ public class WebSecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/insert").permitAll()
                         .requestMatchers("/register").permitAll()
+                        .requestMatchers("/send").permitAll()
+                        .requestMatchers("/mail").permitAll()
+                        .requestMatchers("/passwordreset").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(myUserDetailsService)
-                .formLogin(formLogin->formLogin.defaultSuccessUrl("/getuserdetails"))
+                .formLogin(formLogin-> formLogin
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/getuserdetails"))
                 .httpBasic(withDefaults());
 
      /*   http
@@ -91,6 +96,7 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 
 

@@ -1,6 +1,7 @@
 package com.atdxt.MainService;
 
 import com.atdxt.Entity.*;
+import jakarta.mail.MessagingException;
 
 import java.util.List;
 
@@ -25,6 +26,6 @@ public interface UserService {
 
     boolean isUsernameUnique(String Username);
 
-
+  String sendMail(String to,String subject,String body) throws MessagingException;
 }
 
