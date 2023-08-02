@@ -15,8 +15,12 @@
             <h2 class="form-signin-heading">Enter your E-mail</h2>
             <p>
                 <label for="email" class="sr-only">Username</label>
-                <input type="text" id="email" name="email" class="form-control" placeholder="email" required="" autofocus="">
+                <input type="text" id="email" name="email" class="form-control" placeholder="email" autofocus="">
+
             </p>
+            <div th:if="${email_error}" class="error-message">
+                <p th:text="${email_error}" style="color:red"></p>
+            </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">send</button>
         </form>
     </div>

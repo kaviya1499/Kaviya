@@ -70,12 +70,14 @@ public class WebSecurityConfig {
                         .requestMatchers("/send").permitAll()
                         .requestMatchers("/mail").permitAll()
                         .requestMatchers("/passwordreset").permitAll()
+                        .requestMatchers("/resetpassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(myUserDetailsService)
                 .formLogin(formLogin-> formLogin
                         .loginPage("/login")
                         .defaultSuccessUrl("/getuserdetails"))
+
                 .httpBasic(withDefaults());
 
      /*   http

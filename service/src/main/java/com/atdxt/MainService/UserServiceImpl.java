@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,6 +47,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    private final Environment environment;
 
     /*public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -96,6 +102,7 @@ public class UserServiceImpl implements UserService {
        // String confirmpasswordEncode= Base64.getEncoder().encodeToString(confirm_password.getBytes());
         String confirmpasswordEncode=passwordEncoder.encode(confirm_password);
         auth.setConfirm_password(confirmpasswordEncode);
+
         auth=authRepository.save(auth);
 
         UserEntity userEntity = new UserEntity(userreq);
@@ -253,10 +260,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Autowired
-    private JavaMailSender javaMailSender;
 
-    private final Environment environment;
 
 
     @Override
@@ -278,6 +282,37 @@ public class UserServiceImpl implements UserService {
         javaMailSender.send(mimeMessage);
 
         return "mail send";
+    }
+
+    @Override
+    public String sendPasswordResetEmail(Auth_Entity authEntity,String email) throws MessagingException {
+        String resetToken = UUID.randomUUID().toString();
+        authEntity.setResetToken(resetToken);
+        authEntity.setResetTokenExpiry(LocalDateTime.now().plusHours(24)); // Token expiry in 24 hours
+        authRepository.save(authEntity);
+
+        // Send the password reset email
+        String subject = "Password Reset";
+        String body = "Hi " + authEntity.getUsername() + ",\n\n"
+                + "Please click on the link below to reset your password:\n"
+                + "http://localhost:8080" + "/passwordreset?token=" + resetToken ;
+
+        return sendMail(email, subject, body);
+
+    }
+
+
+    @Override
+    public String resetPassword(Auth_Entity authEntity, String password,String confirmpassword) {
+        // Update the user's password and clear the reset token
+
+        authEntity.setPassword(passwordEncoder.encode(password));
+        authEntity.setConfirm_password(passwordEncoder.encode(confirmpassword));
+        authEntity.setResetToken(null);
+        authEntity.setResetTokenExpiry(null);
+        authRepository.save(authEntity);
+        return "password reset";
+
     }
 
 

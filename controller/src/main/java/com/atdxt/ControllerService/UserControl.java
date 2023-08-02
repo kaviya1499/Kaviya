@@ -77,6 +77,9 @@ public class UserControl {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private DetailsRepository detailsRepository;
+
 
 
 
@@ -177,7 +180,7 @@ public class UserControl {
     @PostMapping("/insert")
     public RedirectView createUser(@ModelAttribute("userreq") UserRequest userreq,@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
 
-        System.out.println(userreq.getEmail());
+
 
         if((userreq.getName()).isEmpty()){
             String errorMessage = "User name is mandatory.";
@@ -513,9 +516,26 @@ public class UserControl {
     @PostMapping("/login")
     public RedirectView processLogin(@RequestParam("username") String username,
                                      @RequestParam("password") String password,
-                                     HttpServletRequest request) {
+                                     HttpServletRequest request,RedirectAttributes redirectAttributes) {
+System.out.println(username+password);
+    try {
+            if(username.isEmpty()){
+                String errorMessage = "User name is mandatory.";
+                redirectAttributes.addFlashAttribute("username_error", errorMessage);
+                return new RedirectView("/login", true);
+            }
 
-        try {
+            if(password.isEmpty()){
+                String errorMessage = "Password is mandatory.";
+                redirectAttributes.addFlashAttribute("password_error", errorMessage);
+                return new RedirectView("/login", true);
+            }
+            if(userService.isUsernameUnique(username)){
+                String errorMessage = "Username not found.";
+                redirectAttributes.addFlashAttribute("username_error", errorMessage);
+                return new RedirectView("/login", true);
+            }
+
             request.login(username, password);
             return new RedirectView("/dashboard");
         } catch (ServletException e) {
@@ -539,15 +559,66 @@ public class UserControl {
     }
 
 
+
     @PostMapping("/send")
-    public RedirectView sendMail(@RequestParam("email") String email) throws MessagingException {
-         userService.sendMail(email,"Password Reset", "http://localhost:8080/passwordreset");
+    public RedirectView sendMail(@RequestParam("email") String email,RedirectAttributes redirectAttributes) throws MessagingException {
+
+        if(email.isEmpty()){
+            String errorMessage = "Email is mandatory.";
+            redirectAttributes.addFlashAttribute("email_error", errorMessage);
+            return new RedirectView("/mail", true);
+        }
+
+        if (!userService.isValid(email)) {
+
+            String errorMessage = "Invalid email address provided.";
+            redirectAttributes.addFlashAttribute("email_error", errorMessage);
+            return new RedirectView("/mail", true);
+            //return ResponseEntity.badRequest().body("Email Id: ' " + userreq.getEmail() + " ' Invalid email address provided.");
+        }
+
+        if (userService.isEmailUnique1(email)) {
+            String errorMessage = "Email not Found.";
+            redirectAttributes.addFlashAttribute("email_error", errorMessage);
+            return new RedirectView("/mail", true);
+        }
+      /*  else{
+            String errorMessage = "Email not Found.";
+            redirectAttributes.addFlashAttribute("email_error", errorMessage);
+            return new RedirectView("/mail", true);
+        }*/
+
+         Integer did=detailsRepository.findIdByEmail(email);
+
+         Integer uid=userRepository.findByDetailsId(did);
+
+         Auth_Entity authEntity=authRepository.findByAuid(uid);
+
+         userService.sendPasswordResetEmail(authEntity,email);
+
+        String Message = "Reset Link has sent to your mail";
+        redirectAttributes.addFlashAttribute("resetLinkSent", Message);
         return new RedirectView("/login", true);
     }
 
+    @PostMapping("/resetpassword")
+    public RedirectView processResetPasswordForm(@RequestParam("token") String token, @RequestParam("password") String password, @RequestParam("confirmpassword") String confirmpassword,RedirectAttributes redirectAttributes) {
+        Auth_Entity authEntity = authRepository.findByResetToken(token);
+        if (authEntity == null) {
+
+            return new RedirectView("/login", true);
+        }
+
+        userService.resetPassword(authEntity, password,confirmpassword);
+        String Message = "Password Reset Successfully Completed";
+        redirectAttributes.addFlashAttribute("passwordreset", Message);
+        return new RedirectView("/login", true);
 
 
+    }
 }
+
+
 
 
 

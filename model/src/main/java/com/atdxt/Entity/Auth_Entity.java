@@ -35,6 +35,14 @@ public class Auth_Entity {
     @Column(name = "roles")
     private String roles="USER";
 
+
+    @Column(name = "reset_token")
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
+
     public Auth_Entity() {
 
     }

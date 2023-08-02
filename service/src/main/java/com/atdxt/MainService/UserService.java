@@ -26,6 +26,9 @@ public interface UserService {
 
     boolean isUsernameUnique(String Username);
 
+    String sendPasswordResetEmail(Auth_Entity authEntity,String email) throws MessagingException;
   String sendMail(String to,String subject,String body) throws MessagingException;
+  String resetPassword(Auth_Entity authEntity,String password,String confirmpassword);
+
 }
 
