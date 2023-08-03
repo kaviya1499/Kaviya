@@ -71,6 +71,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/mail").permitAll()
                         .requestMatchers("/passwordreset").permitAll()
                         .requestMatchers("/resetpassword").permitAll()
+                        .requestMatchers("/login_validation").permitAll()
+                        .requestMatchers("/loginProcess").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(myUserDetailsService)

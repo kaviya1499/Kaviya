@@ -54,7 +54,10 @@ tr:nth-child(even) {
                 <br>
                 <br>
                 <a href="/login"><button class="btn btn-danger" style="width: 100px;">sign in</button></a>
-
+<br>
+                <br>
+                <p th:if="${UserPassError}" style="background-color: red;height: 35px;font-size: 18px;color:white">Invalid UserName and Password Provided. Try Agian...</p>
+                <p th:if="${logout}" style="background-color: red;height: 35px;font-size: 18px;color:white">User Logout Successfully</p>
             </center>
 
 

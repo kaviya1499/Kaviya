@@ -72,4 +72,6 @@ public class Auth_Entity {
 
     public Auth_Entity(String username, String decodedPassword, String createdon, String modified, String confirm_password, String roles) {
     }
+
+
 }

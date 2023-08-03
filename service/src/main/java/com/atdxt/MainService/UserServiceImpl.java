@@ -205,13 +205,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-
-
-
-
-
-
     private static final Pattern EMAIL_REGEX_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     private static final Set<String> UNIQUE_EMAILS = new HashSet<>();
 
@@ -219,14 +212,7 @@ public class UserServiceImpl implements UserService {
         return EMAIL_REGEX_PATTERN.matcher(email).matches();
     }
 
-  /*  public boolean isUnique(String email) {
-        if (UNIQUE_EMAILS.contains(email)) {
-            return true; // Email is not unique
-        } else {
-            UNIQUE_EMAILS.add(email);
-            return false; // Email is unique
-        }
-    }*/
+
 
     public boolean isEmailUnique1(String email) {
         Optional<Details_Entity> existingUser = detailsRepository.findByEmail(email);
@@ -290,12 +276,13 @@ public class UserServiceImpl implements UserService {
         authEntity.setResetToken(resetToken);
         authEntity.setResetTokenExpiry(LocalDateTime.now().plusHours(24)); // Token expiry in 24 hours
         authRepository.save(authEntity);
+        String url = environment.getProperty("app.url");
 
         // Send the password reset email
         String subject = "Password Reset";
         String body = "Hi " + authEntity.getUsername() + ",\n\n"
                 + "Please click on the link below to reset your password:\n"
-                + "http://localhost:8080" + "/passwordreset?token=" + resetToken ;
+                + url + "/passwordreset?token=" + resetToken ;
 
         return sendMail(email, subject, body);
 

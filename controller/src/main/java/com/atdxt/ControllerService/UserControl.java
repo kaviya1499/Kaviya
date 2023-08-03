@@ -513,38 +513,47 @@ public class UserControl {
         return modelAndView;
     }
 
-    @PostMapping("/login")
-    public RedirectView processLogin(@RequestParam("username") String username,
-                                     @RequestParam("password") String password,
-                                     HttpServletRequest request,RedirectAttributes redirectAttributes) {
-System.out.println(username+password);
-    try {
-            if(username.isEmpty()){
-                String errorMessage = "User name is mandatory.";
-                redirectAttributes.addFlashAttribute("username_error", errorMessage);
-                return new RedirectView("/login", true);
-            }
 
-            if(password.isEmpty()){
-                String errorMessage = "Password is mandatory.";
-                redirectAttributes.addFlashAttribute("password_error", errorMessage);
-                return new RedirectView("/login", true);
-            }
-            if(userService.isUsernameUnique(username)){
-                String errorMessage = "Username not found.";
-                redirectAttributes.addFlashAttribute("username_error", errorMessage);
-                return new RedirectView("/login", true);
-            }
-
-            request.login(username, password);
-            return new RedirectView("/dashboard");
-        } catch (ServletException e) {
-
-            RedirectView redirectView = new RedirectView("/login");
-            redirectView.addStaticAttribute("error", "Invalid username or password");
-            return redirectView;
+/*    @PostMapping("/login_validation")
+    public RedirectView validation(@RequestParam("username") String username,
+                                   @RequestParam("password") String password,HttpServletRequest request,RedirectAttributes redirectAttributes){
+        if(username.isEmpty()){
+            String errorMessage = "User name is mandatory.";
+            redirectAttributes.addFlashAttribute("username_error", errorMessage);
+            return new RedirectView("/login", true);
         }
-    }
+
+        if(password.isEmpty()){
+            String errorMessage = "Password is mandatory.";
+            redirectAttributes.addFlashAttribute("password_error", errorMessage);
+            return new RedirectView("/login", true);
+        }
+        if(userService.isUsernameUnique(username)){
+            String errorMessage = "Username not found.";
+            redirectAttributes.addFlashAttribute("username_error", errorMessage);
+            return new RedirectView("/login", true);
+        }
+         processLogin(username,password);
+
+
+
+    }*/
+
+
+   @PostMapping("/login")
+   public RedirectView processLogin(@RequestParam("username") String username,
+                                    @RequestParam("password") String password,
+                                    HttpServletRequest request) {
+       try {
+           request.login(username, password);
+           return new RedirectView("/dashboard");
+       } catch (ServletException e) {
+
+           RedirectView redirectView = new RedirectView("/login");
+           redirectView.addStaticAttribute("error", "Invalid username or password");
+           return redirectView;
+       }
+   }
 
 
     @GetMapping("/mail")
@@ -603,9 +612,28 @@ System.out.println(username+password);
 
     @PostMapping("/resetpassword")
     public RedirectView processResetPasswordForm(@RequestParam("token") String token, @RequestParam("password") String password, @RequestParam("confirmpassword") String confirmpassword,RedirectAttributes redirectAttributes) {
-        Auth_Entity authEntity = authRepository.findByResetToken(token);
-        if (authEntity == null) {
+       if(password.isEmpty()){
+           String errorMessage = "Password is mandatory.";
+           redirectAttributes.addFlashAttribute("password_error", errorMessage);
+           return new RedirectView("/passwordreset?token="+token, true);
+       }
+        if(confirmpassword.isEmpty()){
+            String errorMessage = "Confirm Password is mandatory.";
+            redirectAttributes.addFlashAttribute("cpassword_error", errorMessage);
+            return new RedirectView("/passwordreset?token="+token, true);
+        }
 
+        if(!(password.equals(confirmpassword))){
+            String errorMessage = "Password and Confirm password should be same.";
+            redirectAttributes.addFlashAttribute("cpassword_error", errorMessage);
+            return new RedirectView("/passwordreset?token="+token, true);
+        }
+
+        Auth_Entity authEntity = authRepository.findByResetToken(token);
+
+        if (authEntity == null) {
+            String errorMessage = "Password reset token has expired.";
+            redirectAttributes.addFlashAttribute("tokenexpired", errorMessage);
             return new RedirectView("/login", true);
         }
 
@@ -613,7 +641,6 @@ System.out.println(username+password);
         String Message = "Password Reset Successfully Completed";
         redirectAttributes.addFlashAttribute("passwordreset", Message);
         return new RedirectView("/login", true);
-
 
     }
 }

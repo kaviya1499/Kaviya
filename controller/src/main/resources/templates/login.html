@@ -16,6 +16,7 @@
 
   <p th:if="${resetLinkSent}" style="background-color: cornflowerblue;height: 35px;font-size: 18px;">Reset link sent to your mail.</p>
   <p th:if="${passwordreset}" style="background-color: green;height: 35px;font-size: 18px;color:white">Password Reset Successfully Completed</p>
+  <p th:if="${tokenexpired}" style="background-color: red;height: 35px;font-size: 18px;color:white">Password reset token has expired.</p>
   <p>
     <label for="username" class="sr-only">Username</label>
     <input type="text" id="username" name="username" class="form-control" placeholder="Username" autofocus="">
