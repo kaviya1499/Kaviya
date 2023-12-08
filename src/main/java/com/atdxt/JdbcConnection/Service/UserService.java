@@ -21,6 +21,10 @@ public interface UserService {
 
     User createUser(User user);
 
+    User getUserById(Integer userId);
+
+    User updateUser(Integer userId, User user);
+
 
 
 }

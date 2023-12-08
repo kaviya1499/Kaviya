@@ -6,26 +6,35 @@ import jakarta.persistence.*;
 import javax.lang.model.element.Name;
 
 @Entity
-@Table(name="users")
+@Table(name="androidusers")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
-    @Column(name = "Name")
-    private String Name;
-    @Column(name="Age")
-    private String Age;
-    @Column(name = "Address")
-    private String Address;
+    @Column(name = "username")
+    private String username;
+    @Column(name="password")
+    private String password;
+    @Column(name="name")
+    private String name;
+    @Column(name="phone")
+    private String phone;
+    @Column(name = "address")
+    private String address;
+    @Column(name="role")
+    private String role;
 
     public User() {
     }
 
-    public User(String name, String age, String address) {
-        this.Name = name;
-        this.Age = age;
-        this.Address = address;
+    public User(String username, String password, String name, String phone, String address, String role) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.address = address;
+        this.role=role;
     }
 
     public int getId() {
@@ -36,29 +45,53 @@ public class User {
         Id = id;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
-    public String getAge() {
-        return Age;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setAge(String age) {
-        Age = age;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
     }
+
+    public String getRole(){
+        return role;
+    }
+    public void setRole(String role){
+        this.role=role;
+    }
+
+
 
 }
